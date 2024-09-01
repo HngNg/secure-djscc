@@ -195,7 +195,7 @@ class OFDM(nn.Module):
         y_noisy = y + noise
         # Get the size of y_noisy
         y_noisy_size = y_noisy.size()
-        print(f'Size of y_noisy1: {y_noisy_size}')
+        # print(f'Size of y_noisy1: {y_noisy_size}')
         
         # # AES METHOD
         # # Generate a 16-byte IV for CBC mode

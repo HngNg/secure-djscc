@@ -204,7 +204,7 @@ class OFDM(nn.Module):
         encrypted_y_noisy = self.encrypt_tensor(y_noisy, iv, key1)
         key2 = b'w\xb7t<\xd1\x18\xbeg\xe5\xdc\x14\xa0Yb17\xb4\xe0\\\x16\x13\xbd\xder\xdd\xed\x8c\x8a\x92\xd6Yn'        
         decrypted_y_noisy = self.decrypt_tensor(encrypted_y_noisy, iv, key2, y_noisy.shape)
-        y_noisy = decrypted_y_noisy
+        y_noisy = decrypted_y_noisy.to(self.device)
         # Get the size of y_noisy
         y_noisy_size = y_noisy.size()
         print(f'Size of y_noisy2: {y_noisy_size}')

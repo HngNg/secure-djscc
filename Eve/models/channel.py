@@ -72,6 +72,9 @@ class OFDM(nn.Module):
         super(OFDM, self).__init__()
         self.opt = opt
 
+        #Setup the device
+        self.device = device 
+
         # Setup the channel layer
         self.channel = Channel(opt, device)
         

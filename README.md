@@ -32,12 +32,15 @@ To run this project, you need to have the following libraries installed in your 
 ``` python
 pip install python==3.9.0
 pip install numpy==1.24.4
-pip install pytorch==1.13.1 cudatoolkit==12.2 -c pytorch
+pip install pytorch==1.13.1
+pip install cudatoolkit==12.2
 pip install torchvision==0.17.1
 pip install scipy==1.10.1
 pip install visdom==0.2.4
 pip install pytorch_msssim
 pip install dominate==2.8.0
+pip install torch
+pip install cryptography
 ```
 
 # Training process

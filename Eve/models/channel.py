@@ -92,7 +92,8 @@ class OFDM(nn.Module):
     def encrypt_tensor(self, tensor, iv, key):
         # Flatten the tensor and convert it to bytes
         tensor_flat = tensor.view(-1)
-        tensor_bytes = tensor_flat.detach().numpy().tobytes()
+        tensor_bytes = tensor_flat.detach().cpu().numpy().tobytes()
+
 
         # Pad the byte array to be a multiple of 16 bytes
         padder = padding.PKCS7(128).padder()

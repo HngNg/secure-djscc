@@ -123,21 +123,20 @@ class OFDM(nn.Module):
         try:
             unpadder = padding.PKCS7(128).unpadder()
             decrypted_data = unpadder.update(decrypted_padded_data) + unpadder.finalize()
+                    # Convert the decrypted bytes back to a NumPy array
+            y_noisy_flat = np.frombuffer(decrypted_data, dtype=np.float32)
+
+            # Ensure the buffer size is correct
+            if y_noisy_flat.size > original_shape.numel():
+                # Truncate the array
+                y_noisy_flat = y_noisy_flat[:original_shape.numel()]
+            elif y_noisy_flat.size < original_shape.numel():
+                # Pad the array with zeros
+                y_noisy_flat = np.pad(y_noisy_flat, (0, original_shape.numel() - y_noisy_flat.size), 'constant')
         except ValueError:
             # print("Invalid padding bytes detected. Returning noise.")
             return torch.randn(128, 1, 640)
             decrypted_data = decrypted_padded_data
-
-        # Convert the decrypted bytes back to a NumPy array
-        y_noisy_flat = np.frombuffer(decrypted_data, dtype=np.float32)
-
-        # Ensure the buffer size is correct
-        if y_noisy_flat.size > original_shape.numel():
-            # Truncate the array
-            y_noisy_flat = y_noisy_flat[:original_shape.numel()]
-        elif y_noisy_flat.size < original_shape.numel():
-            # Pad the array with zeros
-            y_noisy_flat = np.pad(y_noisy_flat, (0, original_shape.numel() - y_noisy_flat.size), 'constant')
 
         # Reshape it back to the original shape of the tensor
         y_noisy = torch.from_numpy(y_noisy_flat).view(original_shape)
@@ -198,19 +197,19 @@ class OFDM(nn.Module):
         y_noisy_size = y_noisy.size()
         print(f'Size of y_noisy1: {y_noisy_size}')
         
-        # NEW METHOD
-        # Generate a 16-byte IV for CBC mode
-        iv = os.urandom(16)
-        # Generate a 32-byte AES key (AES-256)
-        key1 = b'w\xb8t<\xd1\x18\xbeg\xe5\xdc\x14\xa0Yb17\xb4\xe0\\\x16\x13\xbd\xder\xdd\xed\x8c\x8a\x91\xd6Yn'
-        # Simulate the process of encrypt and decrypt, but with a wrong key
-        encrypted_y_noisy = self.encrypt_tensor(y_noisy, iv, key1)
-        key2 = b'w\xb7t<\xd1\x18\xbeg\xe5\xdc\x14\xa0Yb17\xb4\xe0\\\x16\x13\xbd\xder\xdd\xed\x8c\x8a\x92\xd6Yn'        
-        decrypted_y_noisy = self.decrypt_tensor(encrypted_y_noisy, iv, key2, y_noisy.shape)
-        y_noisy = decrypted_y_noisy.to(self.device)
-        # Get the size of y_noisy
-        y_noisy_size = y_noisy.size()
-        print(f'Size of y_noisy2: {y_noisy_size}')
+        # # AES METHOD
+        # # Generate a 16-byte IV for CBC mode
+        # iv = os.urandom(16)
+        # # Generate a 32-byte AES key (AES-256)
+        # key1 = b'w\xb8t<\xd1\x18\xbeg\xe5\xdc\x14\xa0Yb17\xb4\xe0\\\x16\x13\xbd\xder\xdd\xed\x8c\x8a\x91\xd6Yn'
+        # # Simulate the process of encrypt and decrypt, but with a wrong key
+        # encrypted_y_noisy = self.encrypt_tensor(y_noisy, iv, key1)
+        # key2 = b'w\xb7t<\xd1\x18\xbeg\xe5\xdc\x14\xa0Yb17\xb4\xe0\\\x16\x13\xbd\xder\xdd\xed\x8c\x8a\x92\xd6Yn'        
+        # decrypted_y_noisy = self.decrypt_tensor(encrypted_y_noisy, iv, key2, y_noisy.shape)
+        # y_noisy = decrypted_y_noisy.to(self.device)
+        # # Get the size of y_noisy
+        # y_noisy_size = y_noisy.size()
+        # print(f'Size of y_noisy2: {y_noisy_size}')
         
         # NxPx((S+S')(M+K))  =>  NxPx(S+S')x(M+K)
         output = y_noisy.view(N, self.opt.P, Ns+self.opt.N_pilot, self.opt.M+self.opt.K)

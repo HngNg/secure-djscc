@@ -197,18 +197,18 @@ class OFDM(nn.Module):
         y_noisy_size = y_noisy.size()
         # print(f'Size of y_noisy1: {y_noisy_size}')
         
-        # # AES METHOD
-        # # Generate a 16-byte IV for CBC mode
-        # iv = os.urandom(16)
-        # # Generate a 32-byte AES key (AES-256)
-        # key1 = b'w\xb8t<\xd1\x18\xbeg\xe5\xdc\x14\xa0Yb17\xb4\xe0\\\x16\x13\xbd\xder\xdd\xed\x8c\x8a\x91\xd6Yn'
-        # # Simulate the process of encrypt and decrypt, but with a wrong key
-        # encrypted_y_noisy = self.encrypt_tensor(y_noisy, iv, key1)
-        # key2 = b'w\xb7t<\xd1\x18\xbeg\xe5\xdc\x14\xa0Yb17\xb4\xe0\\\x16\x13\xbd\xder\xdd\xed\x8c\x8a\x92\xd6Yn'        
-        # decrypted_y_noisy = self.decrypt_tensor(encrypted_y_noisy, iv, key2, y_noisy.shape)
-        # y_noisy = decrypted_y_noisy.to(self.device)
-        # # Get the size of y_noisy
-        # y_noisy_size = y_noisy.size()
+        # AES METHOD
+        # Generate a 16-byte IV for CBC mode
+        iv = os.urandom(16)
+        # Generate a 32-byte AES key (AES-256)
+        key1 = b'w\xb8t<\xd1\x18\xbeg\xe5\xdc\x14\xa0Yb17\xb4\xe0\\\x16\x13\xbd\xder\xdd\xed\x8c\x8a\x91\xd6Yn'
+        # Simulate the process of encrypt and decrypt, but with a wrong key
+        encrypted_y_noisy = self.encrypt_tensor(y_noisy, iv, key1)
+        key2 = b'w\xb7t<\xd1\x18\xbeg\xe5\xdc\x14\xa0Yb17\xb4\xe0\\\x16\x13\xbd\xder\xdd\xed\x8c\x8a\x92\xd6Yn'        
+        decrypted_y_noisy = self.decrypt_tensor(encrypted_y_noisy, iv, key2, y_noisy.shape)
+        y_noisy = decrypted_y_noisy.to(self.device)
+        # Get the size of y_noisy
+        y_noisy_size = y_noisy.size()
         # print(f'Size of y_noisy2: {y_noisy_size}')
         
         # NxPx((S+S')(M+K))  =>  NxPx(S+S')x(M+K)
